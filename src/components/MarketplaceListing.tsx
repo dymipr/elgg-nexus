@@ -1,8 +1,11 @@
+
 import React from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Heart, Eye } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
+import { Link } from "react-router-dom";
 
 export interface ListingProps {
   id: string;
@@ -23,6 +26,8 @@ const MarketplaceListing: React.FC<ListingProps> = ({
   type,
   location,
 }) => {
+  const { addToCart } = useCart();
+
   const getTypeColor = (type: string) => {
     const colors: { [key: string]: string } = {
       buy: "bg-blue-500",
@@ -36,6 +41,18 @@ const MarketplaceListing: React.FC<ListingProps> = ({
       crypto: "bg-orange-500",
     };
     return colors[type] || "bg-gray-500";
+  };
+
+  const handleAddToCart = () => {
+    addToCart({
+      id,
+      title,
+      price,
+      image,
+      seller,
+      type,
+      location,
+    });
   };
 
   return (
@@ -68,12 +85,14 @@ const MarketplaceListing: React.FC<ListingProps> = ({
         <p className="text-sm text-gray-500 mt-1">Seller: {seller}</p>
       </CardContent>
       <CardFooter className="p-4 pt-0 flex justify-between gap-2">
-        <Button className="w-full" size="sm">
+        <Button className="w-full" size="sm" onClick={handleAddToCart}>
           <ShoppingCart className="h-4 w-4 mr-2" /> Add to Cart
         </Button>
-        <Button variant="outline" size="sm" className="px-3">
-          <Eye className="h-4 w-4" />
-        </Button>
+        <Link to={`/listing/${id}`}>
+          <Button variant="outline" size="sm" className="px-3">
+            <Eye className="h-4 w-4" />
+          </Button>
+        </Link>
       </CardFooter>
     </Card>
   );
